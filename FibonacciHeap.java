@@ -70,7 +70,7 @@ public class FibonacciHeap
 	 */
 	public HeapNode findMin()
 	{
-		return null; // should be replaced by student code
+		return min; 
 	}
 
 	/**
