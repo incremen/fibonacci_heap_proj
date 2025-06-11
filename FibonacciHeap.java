@@ -7,7 +7,9 @@
 public class FibonacciHeap
 {
 	public HeapNode min;
-	
+	private HeapNode rootList; // pointer to the circular doubly linked list of roots
+	private int size;
+
 	/**
 	 *
 	 * Constructor to initialize an empty heap.
@@ -16,7 +18,9 @@ public class FibonacciHeap
 	 */
 	public FibonacciHeap(int c)
 	{
-		// should be replaced by student code
+	    this.min = null;
+	    this.rootList = null;
+	    this.size = 0;
 	}
 
 	/**
@@ -28,7 +32,35 @@ public class FibonacciHeap
 	 */
 	public HeapNode insert(int key, String info) 
 	{    
-		return null; // should be replaced by student code
+	    HeapNode node = createNewRootNode(key, info);
+		
+	    if (rootList == null) {
+	        node.next = node;
+	        node.prev = node;
+	        rootList = node;
+	        min = node;
+	    } else {
+	        // Insert node into the root list
+	        node.next = rootList;
+	        node.prev = rootList.prev;
+	        rootList.prev.next = node;
+	        rootList.prev = node;
+	        if (key < min.key) {
+	            min = node;
+	        }
+	    }
+	    size++;
+	    return node;
+	}
+
+	private HeapNode createNewRootNode(int key, String info) {
+		HeapNode node = new HeapNode();
+	    node.key = key;
+	    node.info = info;
+	    node.child = null;
+	    node.parent = null;
+	    node.rank = 0;
+		return node;
 	}
 
 	/**
