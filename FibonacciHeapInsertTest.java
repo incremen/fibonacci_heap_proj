@@ -27,9 +27,30 @@ public class FibonacciHeapInsertTest {
         nodes.get(3).child = nodes.get(6);
         nodes.get(6).next = nodes.get(6); nodes.get(6).prev = nodes.get(6);
 
-    
         System.out.println("Tree structure:");
         GeneralTreePrinter.printTree(root);
+
+        // Create a smaller tree with root 7 and children 8 and 9 (as brothers)
+        FibonacciHeap.HeapNode smallRoot = nodes.get(7);
+        smallRoot.child = nodes.get(8);
+        nodes.get(8).next = nodes.get(9); nodes.get(9).prev = nodes.get(8);
+        nodes.get(9).next = nodes.get(8); nodes.get(8).prev = nodes.get(9);
+
+        System.out.println("Smaller tree structure:");
+        GeneralTreePrinter.printTree(smallRoot);
+
+        //now we make both trees brothers and see what happens
+
+        // Create a new parent node (not reusing root)
+        FibonacciHeap.HeapNode bigParent = makeNode(10);
+        bigParent.child = root;
+        // Make root and smallRoot siblings (circular doubly linked list)
+        root.next = smallRoot; smallRoot.prev = root;
+        smallRoot.next = root; root.prev = smallRoot;
+
+        System.out.println("Combined tree structure:");
+        GeneralTreePrinter.printTree(bigParent);
+
     }
     private static FibonacciHeap.HeapNode makeNode(int key) {
         FibonacciHeap.HeapNode node = new FibonacciHeap.HeapNode();
