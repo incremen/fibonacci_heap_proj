@@ -163,6 +163,10 @@ public class FibonacciHeap
 		return 46; // should be replaced by student code
 	}
 
+	public HeapNode getRootList() {
+		return this.rootList;
+	}
+
 	/**
 	 * Class implementing a node in a Fibonacci Heap.
 	 *  
