@@ -2,10 +2,10 @@
 public class FibonacciHeapInsertTest {
     public static void main(String[] args) {
         FibonacciHeap heap = new FibonacciHeap(2);
-        heap.insert(10, "ten");
-        heap.insert(5, "five");
-        heap.insert(20, "twenty");
-        heap.insert(7, "seven");
+        heap.insertKey(10);
+        heap.insertKey(5);
+        heap.insertKey(20);
+        heap.insertKey(7);
 
         // Traverse the root list and print keys and info
         System.out.println("Root list after inserts:");

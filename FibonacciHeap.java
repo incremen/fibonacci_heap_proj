@@ -180,4 +180,8 @@ public class FibonacciHeap
 		public HeapNode parent;
 		public int rank;
 	}
+
+    public HeapNode insertKey(int key) {
+        return insert(key, Integer.toString(key));
+    }
 }
