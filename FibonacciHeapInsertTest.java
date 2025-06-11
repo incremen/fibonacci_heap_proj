@@ -1,31 +1,30 @@
 // Simple test for FibonacciHeap insertions and root list traversal
+
+import java.util.ArrayList;
+
 public class FibonacciHeapInsertTest {
     public static void main(String[] args) {
-        FibonacciHeap heap = new FibonacciHeap(2);
-        heap.insertKey(10);
-        FibonacciHeapPrinter.printHeap(heap);
-        heap.insertKey(5);
-        FibonacciHeapPrinter.printHeap(heap);
-        heap.insertKey(20);
-        FibonacciHeapPrinter.printHeap(heap);
-        heap.insertKey(7);
-        FibonacciHeapPrinter.printHeap(heap);
+        FibonacciHeap.HeapNode root = new FibonacciHeap.HeapNode();
 
-        // Traverse the root list and print keys and info
-        System.out.println("Root list after inserts:");
-        FibonacciHeap.HeapNode start = heap.getRootList();
-        if (start == null) {
-            System.out.println("Root list is empty.");
-            return;
-        }
-        FibonacciHeap.HeapNode curr = start;
-        do {
-            System.out.println("key: " + curr.key + ", info: " + curr.info);
-            curr = curr.next;
-        } while (curr != start);
-
-        // Print mini
-        FibonacciHeap.HeapNode min = heap.min;
-        System.out.println("Min node: key=" + (min != null ? min.key : "null") + ", info=" + (min != null ? min.info : "null"));
+        ArrayList<FibonacciHeap.HeapNode> nodes = new ArrayList<>();
+        for (int i = 0; i <= 10; i++) {
+            FibonacciHeap.HeapNode node = makeNode(i);
+            nodes.add(node);
+            }
+        
+        root= nodes.get(0);
+        root.child = nodes.get(1);
+        nodes.get(1).next = nodes.get(2);
+        nodes.get(2).next = nodes.get(3);
+        nodes.get(1).child = nodes.get(4);
+    
+        System.out.println("Tree structure:");
+        GeneralTreePrinter.printTree(root);
+    }
+    private static FibonacciHeap.HeapNode makeNode(int key) {
+        FibonacciHeap.HeapNode node = new FibonacciHeap.HeapNode();
+        node.key = key;
+        node.info = Integer.toString(key);
+        return node;
     }
 }
