@@ -3,9 +3,13 @@ public class FibonacciHeapInsertTest {
     public static void main(String[] args) {
         FibonacciHeap heap = new FibonacciHeap(2);
         heap.insertKey(10);
+        FibonacciHeapPrinter.printHeap(heap);
         heap.insertKey(5);
+        FibonacciHeapPrinter.printHeap(heap);
         heap.insertKey(20);
+        FibonacciHeapPrinter.printHeap(heap);
         heap.insertKey(7);
+        FibonacciHeapPrinter.printHeap(heap);
 
         // Traverse the root list and print keys and info
         System.out.println("Root list after inserts:");
