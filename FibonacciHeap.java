@@ -9,6 +9,7 @@ public class FibonacciHeap
 	public HeapNode min;
 	private HeapNode rootList; // pointer to the circular doubly linked list of roots
 	private int size;
+	private final int c;
 
 	/**
 	 *
@@ -18,10 +19,11 @@ public class FibonacciHeap
 	 */
 	public FibonacciHeap(int c)
 	{
-	    this.min = null;
-	    this.rootList = null;
-	    this.size = 0;
-	}
+        this.c = c;
+        this.min = null;
+        this.rootList = null;
+        this.size = 0;
+    }
 
 	/**
 	 * 
@@ -60,8 +62,13 @@ public class FibonacciHeap
 	    node.child = null;
 	    node.parent = null;
 	    node.rank = 0;
+		node.lostCount = 0;
 		return node;
 	}
+
+	public HeapNode insertKey(int key) {
+        return insert(key, Integer.toString(key));
+    }
 
 	/**
 	 * 
@@ -179,9 +186,10 @@ public class FibonacciHeap
 		public HeapNode prev;
 		public HeapNode parent;
 		public int rank;
-	}
+		public int lostCount;
 
-    public HeapNode insertKey(int key) {
-        return insert(key, Integer.toString(key));
-    }
+		public HeapNode() {
+
+		}
+	}
 }
