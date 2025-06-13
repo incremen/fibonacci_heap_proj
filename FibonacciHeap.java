@@ -101,8 +101,14 @@ public class FibonacciHeap
 
 		while (current != rootList)
 		{
-
-		}
+			//if no nodes here yet:
+			if (buckets[current.rank] == null) {
+					buckets[current.rank] = current;
+			}
+			else {
+				//if there is a node here, we need to link them
+				HeapNode treeAlreadyHere = buckets[current.rank];
+			}
 	
 
 		
