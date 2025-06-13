@@ -107,14 +107,22 @@ public class FibonacciHeap
 			}
 			else {
 				//if there is a node here, we need to link them
-				HeapNode treeAlreadyHere = buckets[current.rank];
+				HeapNode treeInBucket = buckets[current.rank];
+
+				//well find the smaller tree and make it the root:
+				HeapNode smallerRoot = (treeInBucket.key < current.key) ? treeInBucket : current;
+				HeapNode largerRoot = (treeInBucket.key < current.key) ? current : treeInBucket;
+				//we remove largerRoot from the root list:
+
 			}
 	
 
-		
+		}
 		return 46; // should be replaced by student code
 
 	}
+
+
 
 	/**
 	 * 
