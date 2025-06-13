@@ -230,5 +230,24 @@ public class FibonacciHeap
 		public HeapNode() {
 
 		}
+
+		public void addChild(HeapNode childToAdd) {
+			if (child == null) {
+				child = childToAdd;
+				child.prev = childToAdd;
+				child.next = childToAdd;
+
+			} else {
+				// Insert child into the child list
+				childToAdd.prev = child;
+				childToAdd.next = child.next;
+
+				child.next.prev = childToAdd;
+				child.next = childToAdd;
+
+			}
+			childToAdd.parent = this;
+			this.rank++;
+		}
 	}
 }
