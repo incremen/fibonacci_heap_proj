@@ -93,11 +93,16 @@ public class FibonacciHeap
 		int maxDegree = (int) (Math.log(size) / Math.log(2)) + 2;
 		HeapNode[] buckets = new HeapNode[maxDegree];
 
+
 		HeapNode current = rootList;	
 		if (current == null) {
 			return 0; 
 		}
+
+		HeapNode newRootList = null;
+		
 		//now we loop over the root list and add to each bucket as per degree
+		//eventually well add the new trees to newRootList
 
 		while (current != rootList)
 		{
@@ -112,7 +117,9 @@ public class FibonacciHeap
 				//well find the smaller tree and make it the root:
 				HeapNode smallerRoot = (treeInBucket.key < current.key) ? treeInBucket : current;
 				HeapNode largerRoot = (treeInBucket.key < current.key) ? current : treeInBucket;
-				//we remove largerRoot from the root list:
+
+				//now we make smallerRoot a child of largerRoot
+				
 
 			}
 	
