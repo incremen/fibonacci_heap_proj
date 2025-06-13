@@ -1,3 +1,5 @@
+import java.util.ArrayList;
+
 /**
  * FibonacciHeap
  *
@@ -88,7 +90,22 @@ public class FibonacciHeap
 	 */
 	public int deleteMin()
 	{
-		//now we need to start adding a bunch of buckets
+		int maxDegree = (int) (Math.log(size) / Math.log(2)) + 2;
+		HeapNode[] buckets = new HeapNode[maxDegree];
+
+		HeapNode current = rootList;	
+		if (current == null) {
+			return 0; 
+		}
+		//now we loop over the root list and add to each bucket as per degree
+
+		while (current != rootList)
+		{
+
+		}
+	
+
+		
 		return 46; // should be replaced by student code
 
 	}
