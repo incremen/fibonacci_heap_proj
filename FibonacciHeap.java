@@ -144,6 +144,14 @@ public class FibonacciHeap
 
 				//now we move it to the next bucket:
 
+				//check if theres a node in the next bucket:
+				buckets.pad_until(currentRank+1);
+
+				if (buckets.get(currentRank + 1) == null) {
+					buckets.set(currentRank + 1, smallerRoot);
+					continue;
+				}
+				//otherwise, we need to continue linking:
 			}
 	
 
