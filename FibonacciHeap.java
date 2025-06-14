@@ -110,6 +110,7 @@ public class FibonacciHeap
 				child.parent = null;
 				child = child.next;
 			} while (child != start);
+
 			// Merge child list into root list
 			if (rootList == null) {
 				rootList = start;
@@ -132,7 +133,6 @@ public class FibonacciHeap
 			return 0;
 		}
 		int totalLinks = 0;
-		boolean[] visited = new boolean[100]; // Large enough for most cases
 		HeapNode start = current;
 		do {
 			HeapNode next = current.next;
@@ -144,16 +144,6 @@ public class FibonacciHeap
 		size--;
 		return totalLinks; 
 
-	}
-
-	private void moveMinsChildrenToRootList() {
-		HeapNode firstChild = min.child;
-		HeapNode currentChild = firstChild;
-
-		do {
-			rootList.addChild(currentChild);
-		currentChild = currentChild.next;
-		} while (currentChild != firstChild);
 	}
 
 	private void updateMin() {
