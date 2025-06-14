@@ -344,20 +344,26 @@ public class FibonacciHeap
      * Returns the number of links performed.
      */
     private int linkIntoBuckets(ExpandingArray buckets, HeapNode node) {
+		System.out.println("linkIntoBuckets: " + node.key + " with degree " + node.rank);
         int degree = node.rank;
+		System.out.println("Degree: " + degree);
         buckets.pad_until(degree);
         HeapNode existing = buckets.get(degree);
         if (existing == null) {
             buckets.set(degree, node);
             return 0;
         } else {
+			System.out.println("Existing isnt null!");
+			System.out.println("Existing key: " + existing.key);
             // Link the two trees
             HeapNode smallerRoot = (existing.key < node.key) ? existing : node;
             HeapNode largerRoot = (existing.key < node.key) ? node : existing;
             smallerRoot.addChild(largerRoot);
-            deleteNodeFromList(largerRoot);
+			//V not sure if i need this, dont touch V
+            // deleteNodeFromList(largerRoot);
             buckets.clearIndex(degree);
             // Recursive call to handle further collisions
+			System.err.println("Done linking into buckets!");
             return 1 + linkIntoBuckets(buckets, smallerRoot);
         }
     }

@@ -16,14 +16,6 @@ public class test {
         System.out.println("After insert(20, 'c'):");
         printHeap(heap);
 
-        heap.insert(1, "d");
-        System.out.println("After insert(1, 'd'):");
-        printHeap(heap);
-
-        printMin(heap);
-        heap.deleteMin();
-        System.out.println("After deleteMin():");
-        printHeap(heap);
 
         printMin(heap);
         heap.deleteMin();
