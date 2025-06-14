@@ -303,6 +303,10 @@ public class FibonacciHeap
         public int size() {
             return array.size();
         }
+
+        public void clearIndex(int i) {
+			array.set(i, null);
+        }
     }
 }
 
