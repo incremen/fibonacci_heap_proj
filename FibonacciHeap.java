@@ -114,9 +114,8 @@ public class FibonacciHeap
 		// Loop over the root list and add to each bucket as per degree
 		int totalLinks = 0;
 		do {
-			HeapNode next = current.next;
 			totalLinks += linkIntoBuckets(buckets, current);
-			current = next;
+			current = current.next;
 		} while (current != rootList);
 
 
