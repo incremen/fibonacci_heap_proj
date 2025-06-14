@@ -92,6 +92,21 @@ public class FibonacciHeap
 	{
 		//first, delete min:
 		deleteNodeFromList(min);
+	
+		//add all its children to the root list:
+		HeapNode firstChild = min.child;
+		
+		HeapNode currentChild = firstChild;
+		while (currentChild != firstChild)
+			{
+				rootList.addChild(currentChild);
+				currentChild = currentChild.next;
+
+			}
+
+	
+
+		
 
 
 
