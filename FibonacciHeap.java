@@ -277,6 +277,34 @@ public class FibonacciHeap
 		node.prev.next = node.next;
 		node.next.prev = node.prev;
 	}
+
+	public static class ExpandingArray {
+        private ArrayList<HeapNode> array;
+
+        public ExpandingArray() {
+            this.array = new ArrayList<>();
+        }
+
+        public void set(int i, HeapNode value) {
+            pad_until(i);
+            array.set(i, value);
+        }
+
+        public void pad_until(int i) {
+            while (array.size() <= i) {
+                array.add(null);
+            }
+        }
+
+        public HeapNode get(int i) {
+            if (i >= array.size()) return null;
+            return array.get(i);
+        }
+
+        public int length() {
+            return array.size();
+        }
+    }
 }
 
 
