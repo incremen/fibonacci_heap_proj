@@ -148,6 +148,8 @@ public class FibonacciHeap
 			newRootList.prev.next = node;
 			newRootList.prev = node;
 			}
+
+		this.rootList = newRootList;
 	}
 
 
