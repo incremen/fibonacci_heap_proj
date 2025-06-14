@@ -125,9 +125,29 @@ public class FibonacciHeap
 
 		updateRootListFromBuckets(buckets);
 
+		// Update size and min
+		size--;
+		// Find new min in the root list
+		updateMin();
 
 		return totalLinks; 
 
+	}
+
+	private void updateMin() {
+		if (rootList == null) {
+			min = null;
+		} else {
+			HeapNode minNode = rootList;
+			HeapNode curr = rootList.next;
+			while (curr != rootList) {
+				if (curr.key < minNode.key) {
+					minNode = curr;
+				}
+				curr = curr.next;
+			}
+			min = minNode;
+		}
 	}
 
 	private void updateRootListFromBuckets(ExpandingArray buckets) {
