@@ -1,3 +1,28 @@
+import java.util.ArrayList;
+import java.util.Collections;
+
+class HeapToCompareWith {
+    private ArrayList<Integer> arr = new ArrayList<>();
+
+    public void insert(int key) {
+        arr.add(key);
+    }
+
+    public Integer findMin() {
+        if (arr.isEmpty()) return null;
+        return Collections.min(arr);
+    }
+
+    public void deleteMin() {
+        Integer min = findMin();
+        if (min != null) arr.remove(min);
+    }
+
+    public int size() {
+        return arr.size();
+    }
+}
+
 public class FibonacciHeapTest {
     public static void main(String[] args) {
         FibonacciHeapTest test = new FibonacciHeapTest();
@@ -5,6 +30,7 @@ public class FibonacciHeapTest {
         test.testDeleteMinAndFindMin();
         test.testInsertDeleteMinRandomOrder();
         test.testDuplicateKeysAndInterleavedOps();
+        test.testFibonacciHeapVsNaiveHeap();
         System.out.println("All manual tests completed.");
     }
 
@@ -82,6 +108,49 @@ public class FibonacciHeapTest {
         checkEquals(8, heap.findMin().key, "Min should be 8");
         heap.deleteMin(); // remove 8
         checkNull(heap.findMin(), "Heap should be empty");
+    }
+
+    public void testFibonacciHeapVsNaiveHeap() {
+        System.out.println("testFibonacciHeapVsNaiveHeap");
+        FibonacciHeap fib = new FibonacciHeap(2);
+        HeapToCompareWith naive = new HeapToCompareWith();
+        int maxVal = 10000;
+        java.util.Random rand = new java.util.Random(42);
+
+        // Insert everything from 1 to 1000
+        for (int i = 1; i <= maxVal; i++) {
+            fib.insert(i, Integer.toString(i));
+            naive.insert(i);
+        }
+
+        // Repeat: compare min, delete min 5 times, insert 3 times, compare min, until empty
+        while (naive.size() > 0) {
+            // Compare min before deletes
+            Integer naiveMin = naive.findMin();
+            FibonacciHeap.HeapNode fibMin = fib.findMin();
+            boolean bothNull = naiveMin == null && fibMin == null;
+            boolean bothEqual = naiveMin != null && fibMin != null && naiveMin.equals(fibMin.key);
+            if (bothNull) {
+                System.out.println("PASS: Both heaps empty");
+            } else if (bothEqual) {
+                System.out.println("PASS: min=" + naiveMin);
+            } else {
+                System.err.println("FAIL: Mismatch min: naive=" + naiveMin + ", fib=" + (fibMin == null ? null : fibMin.key));
+            }
+
+            //insert to both:
+            int val = rand.nextInt(maxVal * 2) + 1;
+            fib.insert(val, Integer.toString(val));
+            naive.insert(val);
+
+            // Delete min 5 times
+            for (int i = 0; i < 5 && naive.size() > 0; i++) {
+                fib.deleteMin();
+                naive.deleteMin();
+            }
+
+
+        }
     }
 
     private void checkEquals(int expected, int actual, String msg) {
