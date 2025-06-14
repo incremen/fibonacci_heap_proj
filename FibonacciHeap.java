@@ -88,6 +88,7 @@ public class FibonacciHeap
 	 * Return the number of links.
 	 *
 	 */
+	
 	public int deleteMin()
 	{
 		//first, delete min:
@@ -109,7 +110,6 @@ public class FibonacciHeap
 		if (current == null) {
 			return 0; 
 		}
-		HeapNode newRootList = null;
 		// Loop over the root list and add to each bucket as per degree
 		int totalLinks = 0;
 		do {
@@ -118,8 +118,35 @@ public class FibonacciHeap
 			current = next;
 		} while (current != rootList);
 
-		return totalLinks; // should be replaced by student code
 
+		// Now we need to rebuild the root list from the buckets
+		
+
+		updateRootListFromBuckets(buckets);
+
+
+		return totalLinks; 
+
+	}
+
+	private void updateRootListFromBuckets(ExpandingArray buckets) {
+		HeapNode newRootList = null;
+		for (int i = 0; i < buckets.size(); i++) {
+			HeapNode node = buckets.get(i);
+			if (node == null) continue;
+
+			if (newRootList == null) {
+				newRootList = node;
+				node.next = node;
+				node.prev = node;
+				continue;
+			}
+
+			node.next = newRootList;
+			node.prev = newRootList.prev;
+			newRootList.prev.next = node;
+			newRootList.prev = node;
+			}
 	}
 
 
