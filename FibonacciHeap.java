@@ -124,6 +124,8 @@ public class FibonacciHeap
 				buckets.set(current.rank, current);
 			}
 			else {
+				int currentRank = current.rank;
+
 				//if there is a node here, we need to link them
 				HeapNode treeInBucket = buckets.get(current.rank);
 
@@ -137,10 +139,10 @@ public class FibonacciHeap
 				//largerRoot isnt a root anymore so:
 				deleteNodeFromList(largerRoot);
 				
-				//update the buckets:
-			
 
-				
+				buckets.set(currentRank, null); 
+
+				//now we move it to the next bucket:
 
 			}
 	
