@@ -93,39 +93,55 @@ public class FibonacciHeap
 
 	public int deleteMin()
 	{
-		//first, delete min:
-		deleteNodeFromList(min);
-	
-		//add all its children to the root list:
-		
+		if (min == null) return 0;
+		// Remove min from root list
+		if (min == min.next) {
+			rootList = null;
+		} else {
+			if (rootList == min) rootList = min.next;
+			deleteNodeFromList(min);
+		}
+
+		// Add all min's children to the root list
 		if (min.child != null) {
-		moveMinsChildrenToRootList();
+			HeapNode child = min.child;
+			HeapNode start = child;
+			do {
+				child.parent = null;
+				child = child.next;
+			} while (child != start);
+			// Merge child list into root list
+			if (rootList == null) {
+				rootList = start;
+			} else {
+				HeapNode rootPrev = rootList.prev;
+				HeapNode childPrev = start.prev;
+				rootPrev.next = start;
+				start.prev = rootPrev;
+				childPrev.next = rootList;
+				rootList.prev = childPrev;
+			}
 		}
 
-		
+		// Consolidate
 		ExpandingArray buckets = new ExpandingArray();
-		HeapNode current = rootList;	
+		HeapNode current = rootList;
 		if (current == null) {
-			return 0; 
+			min = null;
+			size--;
+			return 0;
 		}
-		// Loop over the root list and add to each bucket as per degree
 		int totalLinks = 0;
+		boolean[] visited = new boolean[100]; // Large enough for most cases
+		HeapNode start = current;
 		do {
+			HeapNode next = current.next;
 			totalLinks += linkIntoBuckets(buckets, current);
-			current = current.next;
-		} while (current != rootList);
-
-
-		// Now we need to rebuild the root list from the buckets
-		
+			current = next;
+		} while (current != start);
 
 		updateRootListFromBuckets(buckets);
-
-		// Update size and min
 		size--;
-		// Find new min in the root list
-		updateMin();
-
 		return totalLinks; 
 
 	}
@@ -158,24 +174,30 @@ public class FibonacciHeap
 
 	private void updateRootListFromBuckets(ExpandingArray buckets) {
 		HeapNode newRootList = null;
+		HeapNode last = null;
+		HeapNode newMin = null;
 		for (int i = 0; i < buckets.size(); i++) {
 			HeapNode node = buckets.get(i);
 			if (node == null) continue;
-
 			if (newRootList == null) {
 				newRootList = node;
+				last = node;
 				node.next = node;
 				node.prev = node;
-				continue;
+			} else {
+				// Insert node after last
+				node.prev = last;
+				node.next = newRootList;
+				last.next = node;
+				newRootList.prev = node;
+				last = node;
 			}
-
-			node.next = newRootList;
-			node.prev = newRootList.prev;
-			newRootList.prev.next = node;
-			newRootList.prev = node;
+			if (newMin == null || node.key < newMin.key) {
+				newMin = node;
 			}
-
+		}
 		this.rootList = newRootList;
+		this.min = newMin;
 	}
 
 
@@ -340,32 +362,36 @@ public class FibonacciHeap
     }
 
     /**
-     * Recursively links a node into the buckets array, handling repeated collisions.
+     * Iteratively links trees of the same degree in the root list, similar to Ron Goldman's code.
      * Returns the number of links performed.
      */
     private int linkIntoBuckets(ExpandingArray buckets, HeapNode node) {
-		System.out.println("linkIntoBuckets: " + node.key + " with degree " + node.rank);
-        int degree = node.rank;
-		System.out.println("Degree: " + degree);
-        buckets.pad_until(degree);
-        HeapNode existing = buckets.get(degree);
-        if (existing == null) {
-            buckets.set(degree, node);
-            return 0;
-        } else {
-			System.out.println("Existing isnt null!");
-			System.out.println("Existing key: " + existing.key);
-            // Link the two trees
-            HeapNode smallerRoot = (existing.key < node.key) ? existing : node;
-            HeapNode largerRoot = (existing.key < node.key) ? node : existing;
-            smallerRoot.addChild(largerRoot);
-			//V not sure if i need this, dont touch V
-            // deleteNodeFromList(largerRoot);
-            buckets.clearIndex(degree);
-            // Recursive call to handle further collisions
-			System.err.println("Done linking into buckets!");
-            return 1 + linkIntoBuckets(buckets, smallerRoot);
+        int links = 0;
+        node.parent = null;
+        // Isolate node
+        node.next = node;
+        node.prev = node;
+        while (buckets.size() <= node.rank) {
+            buckets.pad_until(node.rank);
         }
+        while (buckets.get(node.rank) != null) {
+            HeapNode other = buckets.get(node.rank);
+            // Always keep the smaller key as the root
+            if (node.key > other.key) {
+                HeapNode temp = node;
+                node = other;
+                other = temp;
+            }
+            // Link other as a child of node
+            node.addChild(other);
+            buckets.set(node.rank - 1, null);
+            links++;
+            while (buckets.size() <= node.rank) {
+                buckets.pad_until(node.rank);
+            }
+        }
+        buckets.set(node.rank, node);
+        return links;
     }
 }
 
