@@ -97,13 +97,10 @@ public class FibonacciHeap
 		deleteNodeFromList(min);
 	
 		//add all its children to the root list:
-		HeapNode firstChild = min.child;
-		HeapNode currentChild = firstChild;
-
-		do {
-			rootList.addChild(currentChild);
-		currentChild = currentChild.next;
-		} while (currentChild != firstChild);
+		
+		if (min.child != null) {
+		moveMinsChildrenToRootList();
+		}
 
 		
 		ExpandingArray buckets = new ExpandingArray();
@@ -131,6 +128,16 @@ public class FibonacciHeap
 
 		return totalLinks; 
 
+	}
+
+	private void moveMinsChildrenToRootList() {
+		HeapNode firstChild = min.child;
+		HeapNode currentChild = firstChild;
+
+		do {
+			rootList.addChild(currentChild);
+		currentChild = currentChild.next;
+		} while (currentChild != firstChild);
 	}
 
 	private void updateMin() {
