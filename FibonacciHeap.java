@@ -90,6 +90,13 @@ public class FibonacciHeap
 	 */
 	public int deleteMin()
 	{
+		//first, delete min:
+		deleteNodeFromList(min);
+
+
+
+
+
 		int maxDegree = (int) (Math.log(size) / Math.log(2)) + 2;
 		HeapNode[] buckets = new HeapNode[maxDegree];
 
@@ -250,4 +257,12 @@ public class FibonacciHeap
 			this.rank++;
 		}
 	}
+
+	public static void deleteNodeFromList(HeapNode node) {
+		node.prev.next = node.next;
+		node.next.prev = node.prev;
+	}
 }
+
+
+
