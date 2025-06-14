@@ -111,15 +111,14 @@ public class FibonacciHeap
 		}
 		HeapNode newRootList = null;
 		// Loop over the root list and add to each bucket as per degree
+		int totalLinks = 0;
 		do {
 			HeapNode next = current.next;
-
-			linkIntoBuckets(buckets, current);
+			totalLinks += linkIntoBuckets(buckets, current);
 			current = next;
 		} while (current != rootList);
 
-		// ...rest of deleteMin logic (rebuilding root list, updating min, etc.)...
-		return 46; // should be replaced by student code
+		return totalLinks; // should be replaced by student code
 
 	}
 
@@ -286,23 +285,25 @@ public class FibonacciHeap
 
     /**
      * Recursively links a node into the buckets array, handling repeated collisions.
+     * Returns the number of links performed.
      */
-    private void linkIntoBuckets(ExpandingArray buckets, HeapNode node) {
+    private int linkIntoBuckets(ExpandingArray buckets, HeapNode node) {
         int degree = node.rank;
         buckets.pad_until(degree);
         HeapNode existing = buckets.get(degree);
         if (existing == null) {
             buckets.set(degree, node);
-			return;
+            return 0;
+        } else {
             // Link the two trees
-		HeapNode smallerRoot = (existing.key < node.key) ? existing : node;
-		HeapNode largerRoot = (existing.key < node.key) ? node : existing;
-		smallerRoot.addChild(largerRoot);
-		
-		deleteNodeFromList(largerRoot);
-		buckets.clearIndex(degree);
-		// Recursive call to handle further collisions
-		linkIntoBuckets(buckets, smallerRoot);
+            HeapNode smallerRoot = (existing.key < node.key) ? existing : node;
+            HeapNode largerRoot = (existing.key < node.key) ? node : existing;
+            smallerRoot.addChild(largerRoot);
+            deleteNodeFromList(largerRoot);
+            buckets.clearIndex(degree);
+            // Recursive call to handle further collisions
+            return 1 + linkIntoBuckets(buckets, smallerRoot);
+        }
     }
 }
 
