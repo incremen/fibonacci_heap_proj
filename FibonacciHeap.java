@@ -127,11 +127,14 @@ public class FibonacciHeap
 		// Consolidate
 		ExpandingArray buckets = new ExpandingArray();
 		HeapNode current = rootList;
+
+		// If the root list is empty, nothings left
 		if (current == null) {
 			min = null;
 			size--;
 			return 0;
 		}
+
 		int totalLinks = 0;
 		HeapNode start = current;
 		do {
@@ -361,7 +364,7 @@ public class FibonacciHeap
         // Isolate node
         node.next = node;
         node.prev = node;
-        while (buckets.size() <= node.rank) {
+        if (buckets.size() <= node.rank) {
             buckets.pad_until(node.rank);
         }
         while (buckets.get(node.rank) != null) {
@@ -376,7 +379,7 @@ public class FibonacciHeap
             node.addChild(other);
             buckets.set(node.rank - 1, null);
             links++;
-            while (buckets.size() <= node.rank) {
+            if (buckets.size() <= node.rank) {
                 buckets.pad_until(node.rank);
             }
         }
