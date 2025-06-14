@@ -104,17 +104,8 @@ public class FibonacciHeap
 
 			}
 
-	
-
 		
-
-
-
-
-
-		int maxDegree = (int) (Math.log(size) / Math.log(2)) + 2;
-		HeapNode[] buckets = new HeapNode[maxDegree];
-
+		ExpandingArray buckets = new ExpandingArray();
 
 		HeapNode current = rootList;	
 		if (current == null) {
@@ -129,18 +120,26 @@ public class FibonacciHeap
 		while (current != rootList)
 		{
 			//if no nodes here yet:
-			if (buckets[current.rank] == null) {
-					buckets[current.rank] = current;
+			if (buckets.size() <= current.rank ) {
+				buckets.set(current.rank, current);
 			}
 			else {
 				//if there is a node here, we need to link them
-				HeapNode treeInBucket = buckets[current.rank];
+				HeapNode treeInBucket = buckets.get(current.rank);
 
 				//well find the smaller tree and make it the root:
 				HeapNode smallerRoot = (treeInBucket.key < current.key) ? treeInBucket : current;
 				HeapNode largerRoot = (treeInBucket.key < current.key) ? current : treeInBucket;
 
-				//now we make smallerRoot a child of largerRoot
+				//now we make largerRoot a child of smallerRoot:
+				smallerRoot.addChild(largerRoot);
+
+				//largerRoot isnt a root anymore so:
+				deleteNodeFromList(largerRoot);
+				
+				//update the buckets:
+			
+
 				
 
 			}
@@ -301,7 +300,7 @@ public class FibonacciHeap
             return array.get(i);
         }
 
-        public int length() {
+        public int size() {
             return array.size();
         }
     }
