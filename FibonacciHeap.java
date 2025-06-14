@@ -95,7 +95,6 @@ public class FibonacciHeap
 	
 		//add all its children to the root list:
 		HeapNode firstChild = min.child;
-		
 		HeapNode currentChild = firstChild;
 		while (currentChild != firstChild)
 			{
@@ -106,56 +105,20 @@ public class FibonacciHeap
 
 		
 		ExpandingArray buckets = new ExpandingArray();
-
 		HeapNode current = rootList;	
 		if (current == null) {
 			return 0; 
 		}
-
 		HeapNode newRootList = null;
-		
-		//now we loop over the root list and add to each bucket as per degree
-		//eventually well add the new trees to newRootList
+		// Loop over the root list and add to each bucket as per degree
+		do {
+			HeapNode next = current.next;
 
-		while (current != rootList)
-		{
-			//if no nodes here yet:
-			if (buckets.size() <= current.rank ) {
-				buckets.set(current.rank, current);
-			}
-			else {
-				int currentRank = current.rank;
+			linkIntoBuckets(buckets, current);
+			current = next;
+		} while (current != rootList);
 
-				//if there is a node here, we need to link them
-				HeapNode treeInBucket = buckets.get(current.rank);
-
-				//well find the smaller tree and make it the root:
-				HeapNode smallerRoot = (treeInBucket.key < current.key) ? treeInBucket : current;
-				HeapNode largerRoot = (treeInBucket.key < current.key) ? current : treeInBucket;
-
-				//now we make largerRoot a child of smallerRoot:
-				smallerRoot.addChild(largerRoot);
-
-				//largerRoot isnt a root anymore so:
-				deleteNodeFromList(largerRoot);
-				
-
-				buckets.set(currentRank, null); 
-
-				//now we move it to the next bucket:
-
-				//check if theres a node in the next bucket:
-				buckets.pad_until(currentRank+1);
-
-				if (buckets.get(currentRank + 1) == null) {
-					buckets.set(currentRank + 1, smallerRoot);
-					continue;
-				}
-				//otherwise, we need to continue linking:
-			}
-	
-
-		}
+		// ...rest of deleteMin logic (rebuilding root list, updating min, etc.)...
 		return 46; // should be replaced by student code
 
 	}
@@ -313,6 +276,33 @@ public class FibonacciHeap
         public int size() {
             return array.size();
         }
+
+        public void clearIndex(int i) {
+            if (i < array.size()) {
+                array.set(i, null);
+            }
+        }
+    }
+
+    /**
+     * Recursively links a node into the buckets array, handling repeated collisions.
+     */
+    private void linkIntoBuckets(ExpandingArray buckets, HeapNode node) {
+        int degree = node.rank;
+        buckets.pad_until(degree);
+        HeapNode existing = buckets.get(degree);
+        if (existing == null) {
+            buckets.set(degree, node);
+			return;
+            // Link the two trees
+		HeapNode smallerRoot = (existing.key < node.key) ? existing : node;
+		HeapNode largerRoot = (existing.key < node.key) ? node : existing;
+		smallerRoot.addChild(largerRoot);
+		
+		deleteNodeFromList(largerRoot);
+		buckets.clearIndex(degree);
+		// Recursive call to handle further collisions
+		linkIntoBuckets(buckets, smallerRoot);
     }
 }
 
