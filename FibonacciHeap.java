@@ -89,6 +89,8 @@ public class FibonacciHeap
 	 *
 	 */
 	
+		//doesnt handle the case where it doesnt have anything to delete, btw . i dont think thats an issue tho
+
 	public int deleteMin()
 	{
 		//first, delete min:
@@ -97,12 +99,11 @@ public class FibonacciHeap
 		//add all its children to the root list:
 		HeapNode firstChild = min.child;
 		HeapNode currentChild = firstChild;
-		while (currentChild != firstChild)
-			{
-				rootList.addChild(currentChild);
-				currentChild = currentChild.next;
 
-			}
+		do {
+			rootList.addChild(currentChild);
+		currentChild = currentChild.next;
+		} while (currentChild != firstChild);
 
 		
 		ExpandingArray buckets = new ExpandingArray();
