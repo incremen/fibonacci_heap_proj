@@ -44,11 +44,7 @@ public class FibonacciHeap
 	        rootList = node;
 	        min = node;
 	    } else {
-	        // Insert node into the root list
-	        node.next = rootList;
-	        node.prev = rootList.prev;
-	        rootList.prev.next = node;
-	        rootList.prev = node;
+	        insertIntoRootList(node);
 	        if (key < min.key) {
 	            min = node;
 	        }
@@ -265,7 +261,26 @@ public class FibonacciHeap
 		int newVal = x.key - diff;
 		if (x.parent != null && newVal < x.parent.key) {
 			cutXFromParent(x);
+			x.parent.rank--;
 
+			// Cascading cuts
+			HeapNode current = x.parent;
+			while (current.parent != null) {
+				current.lostCount++;
+				if (current.lostCount < c) {
+					break;
+				}
+				HeapNode parent = current.parent;
+
+				cutXFromParent(current);
+				parent.rank--;
+
+				// Insert current into root list
+				insertIntoRootList(current);
+				current.parent = null;
+				current.lostCount = 0;
+				current = parent;
+			}
 		}
 		x.key -= diff;
 
@@ -273,9 +288,21 @@ public class FibonacciHeap
 			min = x;
 		}
 
-
-
 		return 46; // should be replaced by student code
+	}
+
+	private void insertIntoRootList(HeapNode current) {
+		if (rootList == null) {
+			rootList = current;
+			current.next = current;
+			current.prev = current;
+			return;
+		}
+
+		current.next = rootList;
+		current.prev = rootList.prev;
+		rootList.prev.next = current;
+		rootList.prev = current;
 	}
 
 	private void cutXFromParent(HeapNode x) {
@@ -288,13 +315,8 @@ public class FibonacciHeap
 			deleteNodeFromListLen2_orMore(x);
 		}
 
-		x.parent.rank--;
 
-		//now insert into root list (which cant be empty)
-		x.next = rootList;
-		x.prev = rootList.prev;
-		rootList.prev.next = x;
-		rootList.prev = x;
+		insertIntoRootList(x);
 
 		x.parent = null;
 	}
