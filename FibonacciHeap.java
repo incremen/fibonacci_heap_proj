@@ -264,27 +264,7 @@ public class FibonacciHeap
 		//first detatch from parent
 
 		if (x.parent != null) {
-			if (x.parent.child == x && x.next == x) {
-				//x is only child
-				x.parent.child = null;
-			}
-			else {
-				x.parent.child = x.next;
-				deleteNodeFromListLen2_orMore(x);
-			}
-
-			x.parent.rank--;
-
-			//now insert into root list
-			x.next = rootList;
-			x.prev = rootList.prev;
-			rootList.prev.next = x;
-			rootList.prev = x;
-
-			x.parent = null;
-			
-			
-
+			cutXFromParent(x);
 
 		}
 		x.key -= diff;
@@ -296,6 +276,27 @@ public class FibonacciHeap
 
 
 		return 46; // should be replaced by student code
+	}
+
+	private void cutXFromParent(HeapNode x) {
+		if (x.parent.child == x && x.next == x) {
+			//x is only child
+			x.parent.child = null;
+		}
+		else {
+			x.parent.child = x.next;
+			deleteNodeFromListLen2_orMore(x);
+		}
+
+		x.parent.rank--;
+
+		//now insert into root list (which cant be empty)
+		x.next = rootList;
+		x.prev = rootList.prev;
+		rootList.prev.next = x;
+		rootList.prev = x;
+
+		x.parent = null;
 	}
 
 	/**
