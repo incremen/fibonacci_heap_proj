@@ -272,6 +272,7 @@ public class FibonacciHeap
 		cutNodeFromItsParent(x);
 		cuts++;
 		x.parent.rank--;
+		insertIntoRootList(x);
 
 		x.parent = null;
 
