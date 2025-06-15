@@ -365,7 +365,7 @@ public class FibonacciHeap
 	 */
 	public int totalLinks()
 	{
-		return 46; // should be replaced by student code
+    	return totalLinksCount;
 	}
 
 
