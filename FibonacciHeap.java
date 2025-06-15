@@ -270,7 +270,7 @@ public class FibonacciHeap
 		//otherwise we need to cut x
 		int cuts = 0;
 
-		cutXFromParent(x);
+		cutNodeFromItsParent(x);
 		cuts++;
 		x.parent.rank--;
 
@@ -278,12 +278,13 @@ public class FibonacciHeap
 		HeapNode current = x.parent;
 		while (current.parent != null) {
 			current.lostCount++;
+
 			if (current.lostCount < c) {
 				break;
 			}
 			HeapNode parent = current.parent;
 
-			cutXFromParent(current);
+			cutNodeFromItsParent(current);
 			cuts++;
 			parent.rank--;
 
@@ -317,7 +318,7 @@ public class FibonacciHeap
 		rootList.prev = current;
 	}
 
-	private void cutXFromParent(HeapNode x) {
+	private void cutNodeFromItsParent(HeapNode x) {
 		if (x.parent.child == x && x.next == x) {
 			//x is only child
 			x.parent.child = null;
