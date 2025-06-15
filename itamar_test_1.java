@@ -30,9 +30,9 @@ class HeapToCompareWith {
     }
 }
 
-public class FibonacciHeapTest {
+public class itamar_test_1 {
     public static void main(String[] args) {
-        FibonacciHeapTest test = new FibonacciHeapTest();
+        itamar_test_1 test = new itamar_test_1();
         test.testInsertAndFindMin();
         test.testDeleteMinAndFindMin();
         test.testInsertDeleteMinRandomOrder();
