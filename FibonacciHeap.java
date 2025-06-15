@@ -388,9 +388,37 @@ public class FibonacciHeap
 	 * Meld the heap with heap2
 	 *
 	 */
-	public void meld(FibonacciHeap heap2)
-	{
-		return; // should be replaced by student code   		
+	public void meld(FibonacciHeap heap2) {
+		// Nothing to do if heap2 is empty
+		if (heap2 == null || heap2.rootList == null) {
+			return;
+		}
+		// If this heap is empty, just adopt heap2 wholesale
+		if (this.rootList == null) {
+			this.rootList = heap2.rootList;
+			this.min = heap2.min;
+		} 
+		else {
+			HeapNode last  = this.rootList.prev;
+			HeapNode first2 = heap2.rootList;
+			HeapNode last2 = first2.prev;
+
+			// linkings
+			last.next = first2;
+			first2.prev = last;
+			last2.next = this.rootList;
+			this.rootList.prev = last2;
+
+			// update the minimum
+			if (heap2.min.key < this.min.key) {
+				this.min = heap2.min;
+			}
+		}
+
+		this.size += heap2.size;
+		heap2.rootList = null;
+		heap2.min      = null;
+		heap2.size     = 0;
 	}
 
 	/**
