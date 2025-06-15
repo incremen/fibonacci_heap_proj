@@ -289,6 +289,10 @@ public class FibonacciHeap
 		}
 		x.key -= diff;
 
+		if (x.key < min.key) {
+			min = x;
+		}
+
 
 
 		return 46; // should be replaced by student code
