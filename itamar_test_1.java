@@ -40,6 +40,7 @@ public class itamar_test_1 {
         test.testFibonacciHeapVsNaiveHeap();
         test.testDecreaseKeyAndDeleteMin();
         test.testHeapStructureAfterOps();
+        test.testLargeDecreaseKeyDeleteMinLoop();
         System.out.println("All manual tests completed.");
     }
 
@@ -237,6 +238,47 @@ public class itamar_test_1 {
             System.out.println("PASS: Structure valid after decreaseKeys");
         } else {
             System.err.println("FAIL: Structure invalid after decreaseKeys");
+        }
+    }
+
+    public void testLargeDecreaseKeyDeleteMinLoop() {
+        FibonacciHeap fib = new FibonacciHeap(2);
+        HeapToCompareWith naive = new HeapToCompareWith();
+        int N = 100_000;
+        FibonacciHeap.HeapNode[] fibNodes = new FibonacciHeap.HeapNode[N];
+        int[] naiveKeys = new int[N];
+        // Insert 100,000 positive ints
+        for (int i = 0; i < N; i++) {
+            fibNodes[i] = fib.insert(i + 1, Integer.toString(i + 1));
+            naive.insert(i + 1);
+            naiveKeys[i] = i + 1;
+        }
+        java.util.Random rand = new java.util.Random(2025);
+        int remaining = N;
+        while (remaining > 0) {
+            // 1,000 decrease keys to negative int
+            for (int i = 0; i < 1000 && remaining > 0; i++) {
+                int idx = rand.nextInt(N);
+                if (fibNodes[idx] != null && fibNodes[idx].key > Integer.MIN_VALUE + 1) {
+                    int diff = fibNodes[idx].key + 1 + rand.nextInt(1000); // make negative
+                    fib.decreaseKey(fibNodes[idx], diff);
+                    naive.decreaseKey(naiveKeys[idx], diff);
+                    naiveKeys[idx] -= diff;
+                }
+            }
+            // 1,000 deleteMin
+            for (int i = 0; i < 1000 && remaining > 0; i++) {
+                Integer naiveMin = naive.findMin();
+                FibonacciHeap.HeapNode fibMin = fib.findMin();
+                boolean bothNull = naiveMin == null && fibMin == null;
+                boolean bothEqual = naiveMin != null && fibMin != null && naiveMin.equals(fibMin.key);
+                if (!bothNull && !bothEqual) {
+                    System.err.println("FAIL: Mismatch min: naive=" + naiveMin + ", fib=" + (fibMin == null ? null : fibMin.key));
+                }
+                fib.deleteMin();
+                naive.deleteMin();
+                remaining--;
+            }
         }
     }
 
