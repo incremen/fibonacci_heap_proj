@@ -426,10 +426,10 @@ public class FibonacciHeap
 	 * Return the number of elements in the heap
 	 *   
 	 */
-	public int size()
-	{
-		return 46; // should be replaced by student code
-	}
+    public int size()
+{
+        return this.size;
+    }
 
 
 	/**
@@ -437,10 +437,18 @@ public class FibonacciHeap
 	 * Return the number of trees in the heap.
 	 * 
 	 */
-	public int numTrees()
-	{
-		return 46; // should be replaced by student code
-	}
+    public int numTrees() {
+        if (rootList == null) {
+            return 0;
+        }
+        int count = 0;
+        HeapNode curr = rootList;
+        do {
+            count++;
+            curr = curr.next;
+        } while (curr != rootList);
+        return count;
+    }
 
 	public HeapNode getRootList() {
 		return this.rootList;
