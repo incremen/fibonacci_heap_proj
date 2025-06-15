@@ -241,55 +241,66 @@ public class itamar_test_1 {
     }
 
     public void testLargeDecreaseKeyDeleteMinLoop() {
-        System.out.println("testLargeDecreaseKeyDeleteMinLoop");
-        // Adjustable parameters
+        System.out.println("testLargeDecreaseKeyDeleteMinLoop (clean version)");
         int N = 4; // number of inserts
-        int DECREASE_KEYS_PER_LOOP = 10;
-        int DELETE_MINS_PER_LOOP = 10;
+        int DECREASE_KEYS = 10;
 
         FibonacciHeap fib = new FibonacciHeap(2);
         HeapToCompareWith naive = new HeapToCompareWith();
         FibonacciHeap.HeapNode[] fibNodes = new FibonacciHeap.HeapNode[N];
-
-        //insert keys
         int[] naiveKeys = new int[N];
+
+        // Insert keys
+        System.out.println("Inserting keys:");
         for (int i = 0; i < N; i++) {
             fibNodes[i] = fib.insert(i + 1, Integer.toString(i + 1));
             naive.insert(i + 1);
             naiveKeys[i] = i + 1;
+            System.out.println("Inserted key: " + (i + 1));
         }
-        java.util.Random rand = new java.util.Random(2025);
-        int remaining = N;
-        while (remaining > 0) {
-            // Decrease keys
-            for (int i = 0; i < DECREASE_KEYS_PER_LOOP && remaining > 0; i++) {
-                int idx = rand.nextInt(N);
-                if (fibNodes[idx] != null && fibNodes[idx].key > Integer.MIN_VALUE + 1) {
-                    int diff = fibNodes[idx].key + 1 + rand.nextInt(1000); // make negative
-                    fib.decreaseKey(fibNodes[idx], diff);
-                    naive.decreaseKey(naiveKeys[idx], diff);
-                    naiveKeys[idx] -= diff;
-                }
-            }
-            // Delete min
-            for (int i = 0; i < DELETE_MINS_PER_LOOP && remaining > 0; i++) {
-                Integer naiveMin = naive.findMin();
-                FibonacciHeap.HeapNode fibMin = fib.findMin();
-                boolean bothNull = naiveMin == null && fibMin == null;
-                boolean bothEqual = naiveMin != null && fibMin != null && naiveMin.equals(fibMin.key);
-                if (!bothNull && !bothEqual) {
-                    System.err.println("FAIL: Mismatch min: naive=" + naiveMin + ", fib=" + (fibMin == null ? null : fibMin.key));
-                }
-                fib.deleteMin();
-                naive.deleteMin();
-                remaining--;
-            }
+        printHeap.printFibonacciHeap(fib);
 
-            // Check structure after each loop
-            if (!checkHeapStructure(fib)) {
-                System.err.println("FAIL: Structure invalid after decreaseKeys and deleteMins");
+        // Decrease keys
+        System.out.println("\nDecreasing keys:");
+        java.util.Random rand = new java.util.Random(2025);
+        for (int i = 0; i < DECREASE_KEYS; i++) {
+            int idx = rand.nextInt(N);
+            if (fibNodes[idx] != null && fibNodes[idx].key > Integer.MIN_VALUE + 1) {
+                int diff = fibNodes[idx].key + 1 + rand.nextInt(1000); // make negative
+                fib.decreaseKey(fibNodes[idx], diff);
+                naive.decreaseKey(naiveKeys[idx], diff);
+                naiveKeys[idx] -= diff;
+                System.out.println("Decreased key at idx " + idx + " by " + diff);
+                System.out.println("Min now: " + fib.findMin().key );
             }
         }
+        printHeap.printFibonacciHeap(fib);
+
+        // Delete mins
+        System.out.println("\nDeleting mins:");
+        for (int i = 0; i < N; i++) {
+            Integer naiveMin = naive.findMin();
+            FibonacciHeap.HeapNode fibMin = fib.findMin();
+            boolean bothNull = naiveMin == null && fibMin == null;
+            boolean bothEqual = naiveMin != null && fibMin != null && naiveMin.equals(fibMin.key);
+            if (!bothNull && !bothEqual) {
+                System.err.println("FAIL: Mismatch min: naive=" + naiveMin + ", fib=" + (fibMin == null ? null : fibMin.key));
+                printHeap.printFibonacciHeap(fib);
+                return;
+            }
+            fib.deleteMin();
+            naive.deleteMin();
+            System.out.println("Heap after deleteMin:");
+            printHeap.printFibonacciHeap(fib);
+        }
+
+        // Final structure check
+        if (!checkHeapStructure(fib)) {
+            System.err.println("FAIL: Structure invalid after all deleteMins");
+            printHeap.printFibonacciHeap(fib);
+            return;
+        }
+        System.out.println("PASS: testLargeDecreaseKeyDeleteMinLoop completed cleanly.");
     }
 
     // Checks the heap structure: min-heap property and lostCount < c for all nodes
