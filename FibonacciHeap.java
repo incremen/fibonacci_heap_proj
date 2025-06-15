@@ -12,9 +12,10 @@ public class FibonacciHeap
 	private HeapNode rootList; // pointer to the circular doubly linked list of roots
 	private int size;
 	private final int c;
+	private int totalLinksCount = 0;
 
 	/**
-	 *
+	 *si
 	 * Constructor to initialize an empty heap.
 	 * pre: c >= 2.
 	 *
@@ -25,6 +26,7 @@ public class FibonacciHeap
         this.min = null;
         this.rootList = null;
         this.size = 0;
+		this.totalLinksCount = 0;
     }
 
 	/**
@@ -132,17 +134,17 @@ public class FibonacciHeap
 			return 0;
 		}
 
-		int totalLinks = 0;
+		int localLinks = 0;
 		HeapNode start = current;
 		do {
 			HeapNode next = current.next;
-			totalLinks += linkIntoBuckets(buckets, current);
+			localLinks += linkIntoBuckets(buckets, current);
 			current = next;
 		} while (current != start);
-
+		totalLinksCount += localLinks;
 		updateRootListFromBuckets(buckets);
 		size--;
-		return totalLinks; 
+		return localLinks; 
 
 	}
 
