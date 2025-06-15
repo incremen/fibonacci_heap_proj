@@ -29,6 +29,5 @@ public class test {
                 System.out.println("Min now: " + fib.findMin().key +"\n\n\n");
             }
         }
-        printHeap.printFibonacciHeap(fib);
     }
 }
