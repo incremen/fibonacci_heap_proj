@@ -146,7 +146,7 @@ public class FibonacciHeap
 
 	}
 
-		public static void deleteNodeFromListLen2_orMore(HeapNode node) {
+	public static void deleteNodeFromListLen2_orMore(HeapNode node) {
 		node.prev.next = node.next;
 		node.next.prev = node.prev;
 	}
@@ -319,16 +319,19 @@ public class FibonacciHeap
 		rootList.prev = current;
 	}
 
-	private void cutNodeFromItsParent(HeapNode x) {
-		if (x.parent.child == x && x.next == x) {
-			//x is only child
-			x.parent.child = null;
-		}
-		else {
-			x.parent.child = x.next;
-			deleteNodeFromListLen2_orMore(x);
-		}
-	}
+    private void cutNodeFromItsParent(HeapNode x) {
+        HeapNode p = x.parent;
+        if (p.child == x) {
+            if (x.next != x) p.child = x.next;
+            else p.child = null;
+        }
+        // unlink from siblings
+        x.prev.next = x.next;
+        x.next.prev = x.prev;
+        // reset x to a solo root
+        x.next = x.prev = x;
+        x.parent = null;
+    }
 
 	/**
 	 * 
@@ -336,9 +339,20 @@ public class FibonacciHeap
 	 * Return the number of links.
 	 *
 	 */
-	public int delete(HeapNode x) 
-	{    
-		return 46; // should be replaced by student code
+	public int delete(HeapNode x) {
+		if (x == null) {
+			return 0;
+		}
+		int diff;
+		if (min != null) {
+			diff = x.key - min.key;
+			diff = diff + 1;
+		} else {
+			diff = x.key + 1;
+		}
+		decreaseKey(x, diff);
+		int links = deleteMin();
+		return links;
 	}
 
 
