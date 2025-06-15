@@ -379,7 +379,7 @@ public class FibonacciHeap
 	 */
 	public int totalCuts()
 	{
-		return 46; // should be replaced by student code
+    	return totalCutsCount;
 	}
 
 
