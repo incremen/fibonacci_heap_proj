@@ -242,6 +242,7 @@ public class itamar_test_1 {
     }
 
     public void testLargeDecreaseKeyDeleteMinLoop() {
+        System.out.println("testLargeDecreaseKeyDeleteMinLoop");
         // Adjustable parameters
         int N = 100; // number of inserts
         int DECREASE_KEYS_PER_LOOP = 10;
@@ -283,6 +284,11 @@ public class itamar_test_1 {
                 fib.deleteMin();
                 naive.deleteMin();
                 remaining--;
+            }
+
+            // Check structure after each loop
+            if (!checkHeapStructure(fib)) {
+                System.err.println("FAIL: Structure invalid after decreaseKeys and deleteMins");
             }
         }
     }
