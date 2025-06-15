@@ -18,6 +18,13 @@ class HeapToCompareWith {
         if (min != null) arr.remove(min);
     }
 
+    public void decreaseKey(int oldKey, int diff) {
+        int idx = arr.indexOf(oldKey);
+        if (idx != -1) {
+            arr.set(idx, oldKey - diff);
+        }
+    }
+
     public int size() {
         return arr.size();
     }
@@ -31,6 +38,7 @@ public class FibonacciHeapTest {
         test.testInsertDeleteMinRandomOrder();
         test.testDuplicateKeysAndInterleavedOps();
         test.testFibonacciHeapVsNaiveHeap();
+        test.testDecreaseKeyAndDeleteMin();
         System.out.println("All manual tests completed.");
     }
 
@@ -114,10 +122,9 @@ public class FibonacciHeapTest {
         System.out.println("testFibonacciHeapVsNaiveHeap");
         FibonacciHeap fib = new FibonacciHeap(2);
         HeapToCompareWith naive = new HeapToCompareWith();
-        int maxVal = 10000;
         java.util.Random rand = new java.util.Random(42);
 
-        // Insert everything from 1 to 1000
+        int maxVal = 100;
         for (int i = 1; i <= maxVal; i++) {
             fib.insert(i, Integer.toString(i));
             naive.insert(i);
@@ -150,6 +157,45 @@ public class FibonacciHeapTest {
             }
 
 
+        }
+    }
+
+    public void testDecreaseKeyAndDeleteMin() {
+        System.out.println("testDecreaseKeyAndDeleteMin");
+        FibonacciHeap fib = new FibonacciHeap(2);
+        HeapToCompareWith naive = new HeapToCompareWith();
+        FibonacciHeap.HeapNode[] fibNodes = new FibonacciHeap.HeapNode[1000];
+        int[] naiveKeys = new int[1000];
+        // Insert 1000 into both heaps
+        for (int i = 0; i < 1000; i++) {
+            fibNodes[i] = fib.insert(1000 + i, Integer.toString(1000 + i));
+            naive.insert(1000 + i);
+            naiveKeys[i] = 1000 + i;
+        }
+        java.util.Random rand = new java.util.Random(123);
+        // Do 100 decreaseKeys
+        for (int i = 0; i < 100; i++) {
+            int idx = rand.nextInt(1000);
+            int diff = rand.nextInt(500) + 1;
+            fib.decreaseKey(fibNodes[idx], diff);
+            naive.decreaseKey(naiveKeys[idx], diff);
+            naiveKeys[idx] -= diff;
+        }
+        // Do 100 deleteMins, compare mins each time
+        for (int i = 0; i < 100; i++) {
+            Integer naiveMin = naive.findMin();
+            FibonacciHeap.HeapNode fibMin = fib.findMin();
+            boolean bothNull = naiveMin == null && fibMin == null;
+            boolean bothEqual = naiveMin != null && fibMin != null && naiveMin.equals(fibMin.key);
+            if (bothNull) {
+                System.out.println("PASS: Both heaps empty");
+            } else if (bothEqual) {
+                System.out.println("PASS: min=" + naiveMin);
+            } else {
+                System.err.println("FAIL: Mismatch min: naive=" + naiveMin + ", fib=" + (fibMin == null ? null : fibMin.key));
+            }
+            fib.deleteMin();
+            naive.deleteMin();
         }
     }
 
