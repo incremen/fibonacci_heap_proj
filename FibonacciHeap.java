@@ -99,7 +99,7 @@ public class FibonacciHeap
 			rootList = null;
 		} else {
 			if (rootList == min) rootList = min.next;
-			deleteNodeFromList(min);
+			deleteNodeFromListLen2_orMore(min);
 		}
 
 		// Add all min's children to the root list
@@ -149,7 +149,7 @@ public class FibonacciHeap
 
 	}
 
-		public static void deleteNodeFromList(HeapNode node) {
+		public static void deleteNodeFromListLen2_orMore(HeapNode node) {
 		node.prev.next = node.next;
 		node.next.prev = node.prev;
 	}
@@ -261,6 +261,23 @@ public class FibonacciHeap
 	 */
 	public int decreaseKey(HeapNode x, int diff) 
 	{    
+		//first detatch from parent
+
+		if (x.parent != null) {
+			if (x.parent.child == x && x.next == x) {
+				//x is only child
+				x.parent.child = null;
+			}
+			else {
+				x.parent.child = x.next;
+				deleteNodeFromListLen2_orMore(x);
+			}
+
+			x.parent.rank--;
+		}
+		
+
+
 		return 46; // should be replaced by student code
 	}
 
