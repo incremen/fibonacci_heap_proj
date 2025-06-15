@@ -274,6 +274,18 @@ public class FibonacciHeap
 			}
 
 			x.parent.rank--;
+
+			//now insert into root list
+			x.next = rootList;
+			x.prev = rootList.prev;
+			rootList.prev.next = x;
+			rootList.prev = x;
+
+			x.parent = null;
+			
+			
+
+
 		}
 		x.key -= diff;
 
