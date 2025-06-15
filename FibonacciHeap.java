@@ -275,7 +275,8 @@ public class FibonacciHeap
 
 			x.parent.rank--;
 		}
-		
+		x.key -= diff;
+
 
 
 		return 46; // should be replaced by student code
