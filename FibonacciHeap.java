@@ -275,9 +275,9 @@ public class FibonacciHeap
 				cutXFromParent(current);
 				parent.rank--;
 
-				// Insert current into root list
-				insertIntoRootList(current);
 				current.parent = null;
+				insertIntoRootList(current);
+				
 				current.lostCount = 0;
 				current = parent;
 			}
@@ -292,6 +292,7 @@ public class FibonacciHeap
 	}
 
 	private void insertIntoRootList(HeapNode current) {
+		
 		if (rootList == null) {
 			rootList = current;
 			current.next = current;
@@ -314,10 +315,6 @@ public class FibonacciHeap
 			x.parent.child = x.next;
 			deleteNodeFromListLen2_orMore(x);
 		}
-
-
-		insertIntoRootList(x);
-
 		x.parent = null;
 	}
 
