@@ -262,8 +262,8 @@ public class FibonacciHeap
 	public int decreaseKey(HeapNode x, int diff) 
 	{    
 		//first detatch from parent
-
-		if (x.parent != null) {
+		int newVal = x.key - diff;
+		if (x.parent != null && newVal < x.parent.key) {
 			cutXFromParent(x);
 
 		}
