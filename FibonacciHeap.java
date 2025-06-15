@@ -13,6 +13,7 @@ public class FibonacciHeap
 	private int size;
 	private final int c;
 	private int totalLinksCount = 0;
+	private int totalCutsCount = 0;
 
 	/**
 	 *si
@@ -27,6 +28,7 @@ public class FibonacciHeap
         this.rootList = null;
         this.size = 0;
 		this.totalLinksCount = 0;
+		this.totalCutsCount  = 0; 
     }
 
 	/**
@@ -303,6 +305,7 @@ public class FibonacciHeap
 			min = x;
 		}
 
+		totalCutsCount += cuts;
 		return cuts;
 	}
 
