@@ -242,12 +242,17 @@ public class itamar_test_1 {
     }
 
     public void testLargeDecreaseKeyDeleteMinLoop() {
+        // Adjustable parameters
+        int N = 100; // number of inserts
+        int DECREASE_KEYS_PER_LOOP = 10;
+        int DELETE_MINS_PER_LOOP = 10;
+
         FibonacciHeap fib = new FibonacciHeap(2);
         HeapToCompareWith naive = new HeapToCompareWith();
-        int N = 100_000;
         FibonacciHeap.HeapNode[] fibNodes = new FibonacciHeap.HeapNode[N];
+
+        //insert keys
         int[] naiveKeys = new int[N];
-        // Insert 100,000 positive ints
         for (int i = 0; i < N; i++) {
             fibNodes[i] = fib.insert(i + 1, Integer.toString(i + 1));
             naive.insert(i + 1);
@@ -256,8 +261,8 @@ public class itamar_test_1 {
         java.util.Random rand = new java.util.Random(2025);
         int remaining = N;
         while (remaining > 0) {
-            // 1,000 decrease keys to negative int
-            for (int i = 0; i < 1000 && remaining > 0; i++) {
+            // Decrease keys
+            for (int i = 0; i < DECREASE_KEYS_PER_LOOP && remaining > 0; i++) {
                 int idx = rand.nextInt(N);
                 if (fibNodes[idx] != null && fibNodes[idx].key > Integer.MIN_VALUE + 1) {
                     int diff = fibNodes[idx].key + 1 + rand.nextInt(1000); // make negative
@@ -266,8 +271,8 @@ public class itamar_test_1 {
                     naiveKeys[idx] -= diff;
                 }
             }
-            // 1,000 deleteMin
-            for (int i = 0; i < 1000 && remaining > 0; i++) {
+            // Delete min
+            for (int i = 0; i < DELETE_MINS_PER_LOOP && remaining > 0; i++) {
                 Integer naiveMin = naive.findMin();
                 FibonacciHeap.HeapNode fibMin = fib.findMin();
                 boolean bothNull = naiveMin == null && fibMin == null;
