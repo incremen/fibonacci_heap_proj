@@ -257,33 +257,42 @@ public class FibonacciHeap
 	 */
 	public int decreaseKey(HeapNode x, int diff) 
 	{    
-		int cuts = 0;
-		//first detatch from parent
-		int newVal = x.key - diff;
-		if (x.parent != null && newVal < x.parent.key) {
-			cutXFromParent(x);
-			cuts++;
-			x.parent.rank--;
 
-			// Cascading cuts
-			HeapNode current = x.parent;
-			while (current.parent != null) {
-				current.lostCount++;
-				if (current.lostCount < c) {
-					break;
-				}
-				HeapNode parent = current.parent;
 
-				cutXFromParent(current);
-				cuts++;
-				parent.rank--;
+		if (x.parent == null || newVal >= x.parent.key) {
+			x.key -= diff;
 
-				current.parent = null;
-				insertIntoRootList(current);
-				current.lostCount = 0;
-				current = parent;
+			if (x.key < min.key) {
+				min = x;
 			}
+			return 0;
 		}
+		//otherwise we need to cut x
+		int cuts = 0;
+
+		cutXFromParent(x);
+		cuts++;
+		x.parent.rank--;
+
+		// Cascading cuts
+		HeapNode current = x.parent;
+		while (current.parent != null) {
+			current.lostCount++;
+			if (current.lostCount < c) {
+				break;
+			}
+			HeapNode parent = current.parent;
+
+			cutXFromParent(current);
+			cuts++;
+			parent.rank--;
+
+			current.parent = null;
+			insertIntoRootList(current);
+			current.lostCount = 0;
+			current = parent;
+		}
+
 		x.key -= diff;
 
 		if (x.key < min.key) {
