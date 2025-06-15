@@ -29,7 +29,6 @@ class HeapToCompareWith {
         return arr.size();
     }
 }
-s
 public class itamar_test_1 {
     public static void main(String[] args) {
         itamar_test_1 test = new itamar_test_1();
