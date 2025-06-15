@@ -274,10 +274,10 @@ public class FibonacciHeap
 		x.parent.rank--;
 		insertIntoRootList(x);
 
-		x.parent = null;
-
 		// Cascading cuts
 		HeapNode current = x.parent;
+		x.parent = null;
+
 		while (current.parent != null) {
 			current.lostCount++;
 
