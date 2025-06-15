@@ -1,76 +1,41 @@
 public class test {
     public static void main(String[] args) {
-        FibonacciHeap heap = new FibonacciHeap(2);
-        System.out.println("After creation:");
-        printHeap(heap);
+        int numberOfInserts = 4; 
+        int DECREASE_KEYS_PER_LOOP = 10;
 
-        heap.insert(10, "a");
-        System.out.println("After insert(10, 'a'):");
-        printHeap(heap);
+        FibonacciHeap fib = new FibonacciHeap(2);
+        FibonacciHeap.HeapNode[] fibNodes = new FibonacciHeap.HeapNode[numberOfInserts];
 
-        heap.insert(5, "b");
-        System.out.println("After insert(5, 'b'):");
-        printHeap(heap);
-
-        heap.insert(20, "c");
-        System.out.println("After insert(20, 'c'):");
-        printHeap(heap);
-
-
-        printMin(heap);
-        heap.deleteMin();
-        System.out.println("After deleteMin():");
-        printHeap(heap);
-
-        printMin(heap);
-        heap.deleteMin();
-        System.out.println("After deleteMin():");
-        printHeap(heap);
-
-        printMin(heap);
-        heap.deleteMin();
-        System.out.println("After deleteMin():");
-        printHeap(heap);
-
-        printMin(heap);
-    }
-
-    static void printHeap(FibonacciHeap heap) {
-        FibonacciHeap.HeapNode root = heap.getRootList();
-        if (root == null) {
-            System.out.println("Heap is empty.");
-            return;
+        // Insert keys
+        for (int i = 0; i < numberOfInserts; i++) {
+            fibNodes[i] = fib.insert(i + 1, Integer.toString(i + 1));
         }
-        FibonacciHeap.HeapNode curr = root;
-        int treeNum = 1;
-        do {
-            System.out.println("Tree " + treeNum + ":");
-            printTree(curr, "  ");
-            curr = curr.next;
-            treeNum++;  
-        } while (curr != root);
+        java.util.Random rand = new java.util.Random(2025);
+        int remaining = numberOfInserts;
+        while (remaining > 0) {
+            // Decrease keys
+            for (int i = 0; i < DECREASE_KEYS_PER_LOOP && remaining > 0; i++) {
+                int idx = rand.nextInt(numberOfInserts);
+                
+                if (fibNodes[idx] != null && fibNodes[idx].key > Integer.MIN_VALUE + 1) {
+                    int diff = fibNodes[idx].key + 1 + rand.nextInt(1000); // make negative
+                    fib.decreaseKey(fibNodes[idx], diff);
+                }
+            }
+            System.out.println("size: " + fib.size());
 
-        System.out.println("\n\n");
-    }
+            // printHeap.printFibonacciHeap(fib);
 
-    static void printTree(FibonacciHeap.HeapNode node, String indent) {
-        if (node == null) return;
-        System.out.println(indent + "Node key=" + node.key + ", info=" + node.info + ", rank=" + node.rank);
-        if (node.child != null) {
-            FibonacciHeap.HeapNode child = node.child;
-            do {
-                printTree(child, indent + "  ");
-                child = child.next;
-            } while (child != node.child);
-        }
-    }
+            fib.deleteMin();
 
-    static void printMin(FibonacciHeap heap) {
-        FibonacciHeap.HeapNode min = heap.findMin();
-        if (min == null) {
-            System.out.println("Min: null");
-        } else {
-            System.out.println("Min: key=" + min.key + ", info=" + min.info);
+
+            // for (int i = 0; i < DELETE_MINS_PER_LOOP && remaining > 0; i++) {
+            //     fib.deleteMin();
+            //     remaining--;
+            // }
+            // // Print heap after each loop
+            System.out.println("Heap after loop:");
+            printHeap.printFibonacciHeap(fib);
         }
     }
 }

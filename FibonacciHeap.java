@@ -89,8 +89,9 @@ public class FibonacciHeap
 
 	public int deleteMin()
 	{
-		if (min == null) return 0;
-		// Remove min from root list
+		if (min == null) {
+			System.err.println("Error: Cannot delete from an empty heap.");
+		}
 		if (min == min.next) {
 			rootList = null;
 		} else {

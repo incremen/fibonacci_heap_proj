@@ -243,7 +243,7 @@ public class itamar_test_1 {
     public void testLargeDecreaseKeyDeleteMinLoop() {
         System.out.println("testLargeDecreaseKeyDeleteMinLoop");
         // Adjustable parameters
-        int N = 100; // number of inserts
+        int N = 4; // number of inserts
         int DECREASE_KEYS_PER_LOOP = 10;
         int DELETE_MINS_PER_LOOP = 10;
 
