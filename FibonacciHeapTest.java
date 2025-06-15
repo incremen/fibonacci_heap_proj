@@ -39,6 +39,7 @@ public class FibonacciHeapTest {
         test.testDuplicateKeysAndInterleavedOps();
         test.testFibonacciHeapVsNaiveHeap();
         test.testDecreaseKeyAndDeleteMin();
+        test.testHeapStructureAfterOps();
         System.out.println("All manual tests completed.");
     }
 
@@ -197,6 +198,86 @@ public class FibonacciHeapTest {
             fib.deleteMin();
             naive.deleteMin();
         }
+    }
+
+    public void testHeapStructureAfterOps() {
+        System.out.println("testHeapStructureAfterOps");
+        FibonacciHeap heap = new FibonacciHeap(2);
+        FibonacciHeap.HeapNode[] nodes = new FibonacciHeap.HeapNode[100];
+        // Insert 100 items
+        for (int i = 0; i < 100; i++) {
+            nodes[i] = heap.insert(1000 + i, Integer.toString(1000 + i));
+        }
+        // Check structure after insertions
+        if (checkHeapStructure(heap)) {
+            System.out.println("PASS: Structure valid after insertions");
+        } else {
+            System.err.println("FAIL: Structure invalid after insertions");
+        }
+        // Do 20 deleteMins
+        for (int i = 0; i < 20; i++) {
+            heap.deleteMin();
+        }
+        // Check structure after deleteMins
+        if (checkHeapStructure(heap)) {
+            System.out.println("PASS: Structure valid after deleteMins");
+        } else {
+            System.err.println("FAIL: Structure invalid after deleteMins");
+        }
+        // Do 20 decreaseKeys
+        java.util.Random rand = new java.util.Random(456);
+        for (int i = 0; i < 20; i++) {
+            int idx = rand.nextInt(100);
+            if (nodes[idx] != null && nodes[idx].key > 1) {
+                heap.decreaseKey(nodes[idx], rand.nextInt(nodes[idx].key - 1) + 1);
+            }
+        }
+        // Check structure after decreaseKeys
+        if (checkHeapStructure(heap)) {
+            System.out.println("PASS: Structure valid after decreaseKeys");
+        } else {
+            System.err.println("FAIL: Structure invalid after decreaseKeys");
+        }
+    }
+
+    // Checks the heap structure: min-heap property and lostCount < c for all nodes
+    public static boolean checkHeapStructure(FibonacciHeap heap) {
+        if (heap == null) return true;
+        FibonacciHeap.HeapNode root = heap.getRootList();
+        if (root == null) return true;
+        int c = heap.getC();
+        java.util.HashSet<FibonacciHeap.HeapNode> visited = new java.util.HashSet<>();
+        FibonacciHeap.HeapNode current = root;
+        do {
+            if (!checkSubtree(current, c, visited)) {
+                System.err.println("Heap property violated at root node " + current.key);
+                return false;
+            }
+            current = current.next;
+        } while (current != root && current != null);
+        return true;
+    }
+
+    private static boolean checkSubtree(FibonacciHeap.HeapNode node, int c, java.util.HashSet<FibonacciHeap.HeapNode> visited) {
+        if (node == null || visited.contains(node)) return true;
+        visited.add(node);
+        if (node.lostCount >= c) {
+            System.err.println("Node " + node.key + " has lostCount >= c: " + node.lostCount);
+            return false;
+        }
+        FibonacciHeap.HeapNode child = node.child;
+        if (child != null) {
+            FibonacciHeap.HeapNode currChild = child;
+            do {
+                if (currChild.key < node.key) {
+                    System.err.println("Min-heap property violated: parent " + node.key + " > child " + currChild.key);
+                    return false;
+                }
+                if (!checkSubtree(currChild, c, visited)) return false;
+                currChild = currChild.next;
+            } while (currChild != child && currChild != null);
+        }
+        return true;
     }
 
     private void checkEquals(int expected, int actual, String msg) {

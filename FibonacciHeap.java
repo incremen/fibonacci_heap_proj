@@ -273,6 +273,8 @@ public class FibonacciHeap
 		cuts++;
 		x.parent.rank--;
 
+		x.parent = null;
+
 		// Cascading cuts
 		HeapNode current = x.parent;
 		while (current.parent != null) {
@@ -324,7 +326,6 @@ public class FibonacciHeap
 			x.parent.child = x.next;
 			deleteNodeFromListLen2_orMore(x);
 		}
-		x.parent = null;
 	}
 
 	/**
@@ -433,4 +434,8 @@ public class FibonacciHeap
 			this.rank++;
 		}
 	}
+
+	public int getC() {
+        return this.c;
+    }
 }
