@@ -12,9 +12,11 @@ public class FibonacciHeap
 	private HeapNode rootList; // pointer to the circular doubly linked list of roots
 	private int size;
 	private final int c;
+	private int totalLinksCount = 0;
+	private int totalCutsCount = 0;
 
 	/**
-	 *
+	 *si
 	 * Constructor to initialize an empty heap.
 	 * pre: c >= 2.
 	 *
@@ -25,6 +27,8 @@ public class FibonacciHeap
         this.min = null;
         this.rootList = null;
         this.size = 0;
+		this.totalLinksCount = 0;
+		this.totalCutsCount  = 0; 
     }
 
 	/**
@@ -132,21 +136,21 @@ public class FibonacciHeap
 			return 0;
 		}
 
-		int totalLinks = 0;
+		int localLinks = 0;
 		HeapNode start = current;
 		do {
 			HeapNode next = current.next;
-			totalLinks += linkIntoBuckets(buckets, current);
+			localLinks += linkIntoBuckets(buckets, current);
 			current = next;
 		} while (current != start);
-
+		totalLinksCount += localLinks;
 		updateRootListFromBuckets(buckets);
 		size--;
-		return totalLinks; 
+		return localLinks; 
 
 	}
 
-		public static void deleteNodeFromListLen2_orMore(HeapNode node) {
+	public static void deleteNodeFromListLen2_orMore(HeapNode node) {
 		node.prev.next = node.next;
 		node.next.prev = node.prev;
 	}
@@ -301,6 +305,7 @@ public class FibonacciHeap
 			min = x;
 		}
 
+		totalCutsCount += cuts;
 		return cuts;
 	}
 
@@ -319,16 +324,19 @@ public class FibonacciHeap
 		rootList.prev = current;
 	}
 
-	private void cutNodeFromItsParent(HeapNode x) {
-		if (x.parent.child == x && x.next == x) {
-			//x is only child
-			x.parent.child = null;
-		}
-		else {
-			x.parent.child = x.next;
-			deleteNodeFromListLen2_orMore(x);
-		}
-	}
+    private void cutNodeFromItsParent(HeapNode x) {
+        HeapNode p = x.parent;
+        if (p.child == x) {
+            if (x.next != x) p.child = x.next;
+            else p.child = null;
+        }
+        // unlink from siblings
+        x.prev.next = x.next;
+        x.next.prev = x.prev;
+        // reset x to a solo root
+        x.next = x.prev = x;
+        x.parent = null;
+    }
 
 	/**
 	 * 
@@ -336,9 +344,20 @@ public class FibonacciHeap
 	 * Return the number of links.
 	 *
 	 */
-	public int delete(HeapNode x) 
-	{    
-		return 46; // should be replaced by student code
+	public int delete(HeapNode x) {
+		if (x == null) {
+			return 0;
+		}
+		int diff;
+		if (min != null) {
+			diff = x.key - min.key;
+			diff = diff + 1;
+		} else {
+			diff = x.key + 1;
+		}
+		decreaseKey(x, diff);
+		int links = deleteMin();
+		return links;
 	}
 
 
@@ -349,7 +368,7 @@ public class FibonacciHeap
 	 */
 	public int totalLinks()
 	{
-		return 46; // should be replaced by student code
+    	return totalLinksCount;
 	}
 
 
@@ -360,7 +379,7 @@ public class FibonacciHeap
 	 */
 	public int totalCuts()
 	{
-		return 46; // should be replaced by student code
+    	return totalCutsCount;
 	}
 
 
@@ -369,9 +388,37 @@ public class FibonacciHeap
 	 * Meld the heap with heap2
 	 *
 	 */
-	public void meld(FibonacciHeap heap2)
-	{
-		return; // should be replaced by student code   		
+	public void meld(FibonacciHeap heap2) {
+		// Nothing to do if heap2 is empty
+		if (heap2 == null || heap2.rootList == null) {
+			return;
+		}
+		// If this heap is empty, just adopt heap2 wholesale
+		if (this.rootList == null) {
+			this.rootList = heap2.rootList;
+			this.min = heap2.min;
+		} 
+		else {
+			HeapNode last  = this.rootList.prev;
+			HeapNode first2 = heap2.rootList;
+			HeapNode last2 = first2.prev;
+
+			// linkings
+			last.next = first2;
+			first2.prev = last;
+			last2.next = this.rootList;
+			this.rootList.prev = last2;
+
+			// update the minimum
+			if (heap2.min.key < this.min.key) {
+				this.min = heap2.min;
+			}
+		}
+
+		this.size += heap2.size;
+		heap2.rootList = null;
+		heap2.min      = null;
+		heap2.size     = 0;
 	}
 
 	/**
@@ -379,10 +426,10 @@ public class FibonacciHeap
 	 * Return the number of elements in the heap
 	 *   
 	 */
-	public int size()
-	{
-		return 46; // should be replaced by student code
-	}
+    public int size()
+{
+        return this.size;
+    }
 
 
 	/**
@@ -390,10 +437,18 @@ public class FibonacciHeap
 	 * Return the number of trees in the heap.
 	 * 
 	 */
-	public int numTrees()
-	{
-		return 46; // should be replaced by student code
-	}
+    public int numTrees() {
+        if (rootList == null) {
+            return 0;
+        }
+        int count = 0;
+        HeapNode curr = rootList;
+        do {
+            count++;
+            curr = curr.next;
+        } while (curr != rootList);
+        return count;
+    }
 
 	public HeapNode getRootList() {
 		return this.rootList;
