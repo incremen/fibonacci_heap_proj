@@ -238,56 +238,49 @@ public class itamar_test_1 {
     }
 
     public void testLargeDecreaseKeyDeleteMinLoop() {
-        int N = 10_000;
+        int N = 100_000;
         int OPS = 1000;
         FibonacciHeap fib = new FibonacciHeap(2);
         HeapToCompareWith naive = new HeapToCompareWith();
-        FibonacciHeap.HeapNode[] fibNodes = new FibonacciHeap.HeapNode[N];
-        int[] naiveKeys = new int[N];
-        boolean[] isAlive = new boolean[N];
+        ArrayList<FibonacciHeap.HeapNode> fibNodes = new ArrayList<>();
+        ArrayList<Integer> naiveKeys = new ArrayList<>();
         for (int i = 0; i < N; i++) {
-            fibNodes[i] = fib.insert(i + 1, Integer.toString(i + 1));
+            fibNodes.add(fib.insert(i + 1, Integer.toString(i + 1)));
             naive.insert(i + 1);
-            naiveKeys[i] = i + 1;
-            isAlive[i] = true;
+            naiveKeys.add(i + 1);
         }
         java.util.Random rand = new java.util.Random(2025);
-        int heapSize = N;
-        while (heapSize > 0) {
+        while (!fibNodes.isEmpty()) {
             // 1. Do OPS decrease keys randomly on alive nodes
             for (int i = 0; i < OPS; i++) {
-                int idx = rand.nextInt(N);
-                if (isAlive[idx] && fibNodes[idx] != null && fibNodes[idx].key > Integer.MIN_VALUE + 1) {
+                if (fibNodes.isEmpty()) break;
+                int idx = rand.nextInt(fibNodes.size());
+                FibonacciHeap.HeapNode node = fibNodes.get(idx);
+                int key = naiveKeys.get(idx);
+                if (node != null && node.key > Integer.MIN_VALUE + 1) {
                     int diff = 100_000;
-                    fib.decreaseKey(fibNodes[idx], diff);
-                    naive.decreaseKey(naiveKeys[idx], diff);
-                    naiveKeys[idx] -= diff;
+                    fib.decreaseKey(node, diff);
+                    naive.decreaseKey(key, diff);
+                    naiveKeys.set(idx, key - diff);
                 }
             }
             // 2. Do OPS delete mins
-            for (int i = 0; i < OPS && heapSize > 0; i++) {
+            for (int i = 0; i < OPS && !fibNodes.isEmpty(); i++) {
                 Integer naiveMin = naive.findMin();
                 FibonacciHeap.HeapNode fibMin = fib.findMin();
                 boolean bothNull = naiveMin == null && fibMin == null;
                 boolean bothEqual = naiveMin != null && fibMin != null && naiveMin.equals(fibMin.key);
                 if (!bothNull && !bothEqual) {
                     System.err.println("FAIL: Mismatch min: naive=" + naiveMin + ", fib=" + (fibMin == null ? null : fibMin.key));
-                    System.err.println("Heap size: " + heapSize);
+                    System.err.println("Heap size: " + fibNodes.size());
                     printHeap.printFibonacciHeap(fib);
                     System.err.println();
                 }
-                // Mark the deleted min as not alive
-                if (fibMin != null) {
-                    for (int j = 0; j < N; j++) {
-                        if (isAlive[j] && fibNodes[j] != null && fibNodes[j].key == fibMin.key) {
-                            isAlive[j] = false;
-                            break;
-                        }
-                    }
-                }
+                int idx = fibNodes.indexOf(fibMin);
+                    fibNodes.remove(idx);
+                    naiveKeys.remove(idx);
                 fib.deleteMin();
                 naive.deleteMin();
-                heapSize--;
             }
         }
     }
