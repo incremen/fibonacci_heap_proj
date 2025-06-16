@@ -259,15 +259,14 @@ public class FibonacciHeap
 	public int decreaseKey(HeapNode x, int diff) 
 	{    
 		x.key -= diff;
-		if (x.key < min.key) {
-			System.out.println("x.key: " + x.key + " min.key: " + min.key);
-			min = x;
-		}
 
 		if (x.parent == null || x.key >= x.parent.key) {
+
+			if (x.key < min.key) {
+				min = x;
+			}
 			return 0;
 		}
-		System.out.println("Node has a parent");
 		//otherwise we need to cut x
 		int cuts = 0;
 
@@ -298,7 +297,9 @@ public class FibonacciHeap
 			current = parent;
 		}
 
-
+		if (x.key < min.key) {
+			min = x;
+		}
 
 		return cuts;
 	}
