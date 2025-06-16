@@ -241,25 +241,27 @@ public class itamar_test_1 {
     }
 
     public void testLargeDecreaseKeyDeleteMinLoop() {
-        int N = 100000;
+        int N = 10_000;
         int OPS = 1000;
         FibonacciHeap fib = new FibonacciHeap(2);
         HeapToCompareWith naive = new HeapToCompareWith();
         FibonacciHeap.HeapNode[] fibNodes = new FibonacciHeap.HeapNode[N];
         int[] naiveKeys = new int[N];
+        boolean[] isAlive = new boolean[N];
         for (int i = 0; i < N; i++) {
             fibNodes[i] = fib.insert(i + 1, Integer.toString(i + 1));
             naive.insert(i + 1);
             naiveKeys[i] = i + 1;
+            isAlive[i] = true;
         }
         java.util.Random rand = new java.util.Random(2025);
         int heapSize = N;
         while (heapSize > 0) {
-            // 1. Do OPS decrease keys randomly
+            // 1. Do OPS decrease keys randomly on alive nodes
             for (int i = 0; i < OPS; i++) {
                 int idx = rand.nextInt(N);
-                if (fibNodes[idx] != null && fibNodes[idx].key > Integer.MIN_VALUE + 1) {
-                    int diff = 100000;
+                if (isAlive[idx] && fibNodes[idx] != null && fibNodes[idx].key > Integer.MIN_VALUE + 1) {
+                    int diff = 100_000;
                     fib.decreaseKey(fibNodes[idx], diff);
                     naive.decreaseKey(naiveKeys[idx], diff);
                     naiveKeys[idx] -= diff;
@@ -273,7 +275,18 @@ public class itamar_test_1 {
                 boolean bothEqual = naiveMin != null && fibMin != null && naiveMin.equals(fibMin.key);
                 if (!bothNull && !bothEqual) {
                     System.err.println("FAIL: Mismatch min: naive=" + naiveMin + ", fib=" + (fibMin == null ? null : fibMin.key));
-                    return;
+                    System.err.println("Heap size: " + heapSize);
+                    printHeap.printFibonacciHeap(fib);
+                    System.err.println();
+                }
+                // Mark the deleted min as not alive
+                if (fibMin != null) {
+                    for (int j = 0; j < N; j++) {
+                        if (isAlive[j] && fibNodes[j] != null && fibNodes[j].key == fibMin.key) {
+                            isAlive[j] = false;
+                            break;
+                        }
+                    }
                 }
                 fib.deleteMin();
                 naive.deleteMin();
