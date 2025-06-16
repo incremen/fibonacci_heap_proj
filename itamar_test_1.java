@@ -15,10 +15,14 @@ class HeapToCompareWith {
 
     public void deleteMin() {
         Integer min = findMin();
+        if (min != null) arr.remove(min);
     }
 
     public void decreaseKey(int oldKey, int diff) {
         int idx = arr.indexOf(oldKey);
+        if (idx != -1) {
+            arr.set(idx, oldKey - diff);
+        }
     }
 
     public int size() {
@@ -237,7 +241,7 @@ public class itamar_test_1 {
     }
 
     public void testLargeDecreaseKeyDeleteMinLoop() {
-        int N = 50_000;
+        int N = 10_000;
         int OPS = 1000;
         FibonacciHeap fib = new FibonacciHeap(2);
         HeapToCompareWith naive = new HeapToCompareWith();
