@@ -1,7 +1,7 @@
 import java.util.ArrayList;
 import java.util.Collections;
 
-class HeapToCompareWith {
+class NaiveHeap {
     private ArrayList<Integer> arr = new ArrayList<>();
 
     public void insert(int key) {
@@ -119,7 +119,7 @@ public class itamar_test_1 {
     public void testFibonacciHeapVsNaiveHeap() {
         System.out.println("testFibonacciHeapVsNaiveHeap");
         FibonacciHeap fib = new FibonacciHeap(2);
-        HeapToCompareWith naive = new HeapToCompareWith();
+        NaiveHeap naive = new NaiveHeap();
         java.util.Random rand = new java.util.Random(42);
 
         int maxVal = 100;
@@ -161,7 +161,7 @@ public class itamar_test_1 {
     public void testDecreaseKeyAndDeleteMin() {
         System.out.println("testDecreaseKeyAndDeleteMin");
         FibonacciHeap fib = new FibonacciHeap(2);
-        HeapToCompareWith naive = new HeapToCompareWith();
+        NaiveHeap naive = new NaiveHeap();
         FibonacciHeap.HeapNode[] fibNodes = new FibonacciHeap.HeapNode[1000];
         int[] naiveKeys = new int[1000];
         // Insert 1000 into both heaps
@@ -241,13 +241,11 @@ public class itamar_test_1 {
         int N = 100_000;
         int OPS = 1000;
         FibonacciHeap fib = new FibonacciHeap(2);
-        HeapToCompareWith naive = new HeapToCompareWith();
+        NaiveHeap naiveHeap = new NaiveHeap();
         ArrayList<FibonacciHeap.HeapNode> fibNodes = new ArrayList<>();
-        ArrayList<Integer> naiveKeys = new ArrayList<>();
         for (int i = 0; i < N; i++) {
             fibNodes.add(fib.insert(i + 1, Integer.toString(i + 1)));
-            naive.insert(i + 1);
-            naiveKeys.add(i + 1);
+            naiveHeap.insert(i + 1);
         }
         java.util.Random rand = new java.util.Random(2025);
         while (!fibNodes.isEmpty()) {
@@ -256,17 +254,15 @@ public class itamar_test_1 {
                 if (fibNodes.isEmpty()) break;
                 int idx = rand.nextInt(fibNodes.size());
                 FibonacciHeap.HeapNode node = fibNodes.get(idx);
-                int key = naiveKeys.get(idx);
                 if (node != null && node.key > Integer.MIN_VALUE + 1) {
                     int diff = 100_000;
                     fib.decreaseKey(node, diff);
-                    naive.decreaseKey(key, diff);
-                    naiveKeys.set(idx, key - diff);
+                    naiveHeap.decreaseKey(node.key + diff, diff); // node.key + diff is the old key
                 }
             }
             // 2. Do OPS delete mins
             for (int i = 0; i < OPS && !fibNodes.isEmpty(); i++) {
-                Integer naiveMin = naive.findMin();
+                Integer naiveMin = naiveHeap.findMin();
                 FibonacciHeap.HeapNode fibMin = fib.findMin();
                 boolean bothNull = naiveMin == null && fibMin == null;
                 boolean bothEqual = naiveMin != null && fibMin != null && naiveMin.equals(fibMin.key);
@@ -276,11 +272,12 @@ public class itamar_test_1 {
                     printHeap.printFibonacciHeap(fib);
                     System.err.println();
                 }
-                int idx = fibNodes.indexOf(fibMin);
-                    fibNodes.remove(idx);
-                    naiveKeys.remove(idx);
+                // Remove the deleted min from fibNodes by value
+                if (fibMin != null) {
+                    fibNodes.remove(fibMin);
+                }
                 fib.deleteMin();
-                naive.deleteMin();
+                naiveHeap.deleteMin();
             }
         }
     }
