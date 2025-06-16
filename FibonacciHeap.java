@@ -274,9 +274,9 @@ public class FibonacciHeap
 		//otherwise we need to cut x
 		int cuts = 0;
 
+		x.parent.rank--;
 		cutNodeFromItsParent(x);
 		cuts++;
-		x.parent.rank--;
 		insertIntoRootList(x);
 
 		// Cascading cuts
