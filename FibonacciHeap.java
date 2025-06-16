@@ -263,25 +263,30 @@ public class FibonacciHeap
 	public int decreaseKey(HeapNode x, int diff) 
 	{    
 		x.key -= diff;
+		if (x.key < min.key) {
+			min = x;
+			}
 
 		if (x.parent == null || x.key >= x.parent.key) {
-
-			if (x.key < min.key) {
-				min = x;
-			}
 			return 0;
 		}
 		//otherwise we need to cut x
 		int cuts = 0;
 
+		HeapNode current = x.parent;
 		x.parent.rank--;
+		
 		cutNodeFromItsParent(x);
+		x.parent = null;
+
 		cuts++;
 		insertIntoRootList(x);
 
 		// Cascading cuts
-		HeapNode current = x.parent;
-		x.parent = null;
+		if (x.parent == null) {
+			return cuts;
+		}
+
 
 		while (current.parent != null) {
 			current.lostCount++;
@@ -299,10 +304,6 @@ public class FibonacciHeap
 			insertIntoRootList(current);
 			current.lostCount = 0;
 			current = parent;
-		}
-
-		if (x.key < min.key) {
-			min = x;
 		}
 
 		totalCutsCount += cuts;
@@ -335,7 +336,6 @@ public class FibonacciHeap
         x.next.prev = x.prev;
         // reset x to a solo root
         x.next = x.prev = x;
-        x.parent = null;
     }
 
 	/**
